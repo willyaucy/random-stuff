@@ -6,6 +6,11 @@ set -e
 
 cd /boot/efi/EFI
 
+if cmp -s "VeraCrypt/DcsBoot.efi" "Microsoft/Boot/bootmgfw.efi" ; then
+  echo "Already patched. Exiting."
+  exit
+fi
+
 if test -f "Microsoft/Boot/bootmgfw_ms.efi.old"; then
   echo "Deleting Microsoft/Boot/bootmgfw_ms.efi.old"
   rm Microsoft/Boot/bootmgfw_ms.efi.old
