@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -e
+
+./check-root-privilege
+
+cd /boot/efi/EFI
+
+if test -f "Microsoft/Boot/bootmgfw_ms.efi.old"; then
+  echo "Deleting Microsoft/Boot/bootmgfw_ms.efi.old"
+  rm Microsoft/Boot/bootmgfw_ms.efi.old
+fi
+
+if test -f "Microsoft/Boot/bootmgfw_ms.efi"; then
+  echo "Backing up bootmgfw_ms.efi";
+  mv Microsoft/Boot/bootmgfw_ms.efi Microsoft/Boot/bootmgfw_ms.efi.old
+fi
+
+echo "Renaming Microsoft/Boot/bootmgfw.efi to bootmgfw_ms.efi"
+mv Microsoft/Boot/bootmgfw.efi Microsoft/Boot/bootmgfw_ms.efi
+
+echo "Copying VeraCrypt/DcsBoot.efi to Microsoft/Boot/bootmgfw.efi";
+cp VeraCrypt/DcsBoot.efi Microsoft/Boot/bootmgfw.efi
+
+echo "Done"
