@@ -1,0 +1,20 @@
+{
+  "name": "typescript-template",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "start": "node built/lib/main.js",
+    "compile": "npm run clean && npx tsc",
+    "test": "npm run compile && jest",
+    "clean": "rm -rf built"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.11.1",
+    "jest": "^25.3.0",
+    "tslint": "^6.1.1",
+    "typescript": "^3.8.3"
+  }
+}
