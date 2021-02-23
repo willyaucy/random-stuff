@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
+  console.log([
+    'Usage: ./static-node-server',
+    'Base path and port can be customized with environment variables',
+    'Example: BASE_PATH=~/someFolder PORT=9000 ./static-node-server'
+  ].join('\n'));
+
+  process.exit(0);
+}
+
+const {readFile} = require('fs')
+const {createServer} = require('http');
+const basePath = (process.env.BASE_PATH || __dirname).replace(/(.*)\/?$/, '$1');
+const port = process.env.PORT || 8080;
+
+createServer(function (req, res) {
+  console.log(`${req.method} ${req.url}`);
+  readFile(`${basePath}/${unescape(req.url)}`, function (err, data) {
+    if (err) {
+      res.writeHead(404);
+      res.end(JSON.stringify(err));
+      return;
+    }
+
+    res.writeHead(200);
+    res.end(data);
+  });
+}).listen(port);
+
+console.log(`Serving content from ${basePath} at port ${port}`);
