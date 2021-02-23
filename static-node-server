@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+const {readFile} = require('fs/promises');
+const {createServer} = require('http');
+const {resolve} = require('path');
+
 if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
   console.log([
     'Usage: ./static-node-server',
@@ -10,23 +14,35 @@ if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
   process.exit(0);
 }
 
-const {readFile} = require('fs')
-const {createServer} = require('http');
-const basePath = (process.env.BASE_PATH || __dirname).replace(/(.*)\/?$/, '$1');
+const basePath = resolve((process.env.BASE_PATH || __dirname).replace(/(.*)\/?$/, '$1'));
 const port = process.env.PORT || 8080;
 
-createServer(function (req, res) {
-  console.log(`${req.method} ${req.url}`);
-  readFile(`${basePath}/${unescape(req.url)}`, function (err, data) {
-    if (err) {
-      res.writeHead(404);
-      res.end(JSON.stringify(err));
-      return;
+createServer(async (req, res) => {
+  let status = 200;
+
+  try {
+    const data = await readFile(resolve(`${basePath}/${unescape(req.url)}`));
+    res.writeHead(status);
+    res.end(data);
+  } catch (err) {
+    switch (err.code) {
+      case 'ENOENT':
+        status = 404;
+        break;
+      case 'EISDIR':
+      case 'ENOTDIR':
+        status = 400;
+        break;
+      default:
+        console.error(err);
+        status = 500;
     }
 
-    res.writeHead(200);
-    res.end(data);
-  });
+    res.writeHead(status);
+    res.end(JSON.stringify(err));
+  }
+
+  console.log(`${req.method} ${req.url} ${status}`);
 }).listen(port);
 
 console.log(`Serving content from ${basePath} at port ${port}`);
