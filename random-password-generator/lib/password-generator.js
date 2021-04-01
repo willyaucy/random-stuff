@@ -1,28 +1,17 @@
-import { Random } from './random';
-
-export interface Options {
-  useUpperCase?: boolean;
-  useLowerCase?: boolean;
-  useNumbers?: boolean;
-  length?: number;
-}
-
-export const defaults: Options = Object.freeze({
+const defaults = Object.freeze({
   useUpperCase: true,
   useLowerCase: true,
   useNumbers: true,
   length: 10,
 });
 
-export class PasswordGenerator {
-private random: Random;
-
-  constructor(random: Random) {
+class PasswordGenerator {
+  constructor(random) {
     this.random = random;
   }
 
-  generatePassword(options?: Options): string {
-    const parsedOptions: Options = {
+  generatePassword(options) {
+    const parsedOptions = {
       ...defaults,
       ...options
     };
@@ -31,7 +20,7 @@ private random: Random;
       throw new Error('Invalid Options');
     }
 
-    const charGroups: string[][] = [];
+    const charGroups = [];
 
     if (parsedOptions.useUpperCase) {
       charGroups.push([...Array(26)].map((v, idx) => String.fromCharCode('A'.charCodeAt(0) + idx)));
@@ -51,13 +40,17 @@ private random: Random;
         .join('');
   }
 
-  private isValidOptions(options: Options) {
+  isValidOptions(options) {
     return options.length >= 0 &&
         options.length < 0xffff &&
         (options.useUpperCase || options.useLowerCase || options.useNumbers);
   }
 
-  private pickOneFromArray<T>(array: T[]): T {
+  pickOneFromArray(array) {
     return array[this.random.nextInt(array.length)];
   }
 }
+
+exports.defaults = defaults;
+
+exports.PasswordGenerator = PasswordGenerator;

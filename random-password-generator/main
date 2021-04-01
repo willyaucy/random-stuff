@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+const { PasswordGenerator } = require('./lib/password-generator');
+const { SecureRandom } = require('./lib/secure-random');
+
+console.log(new PasswordGenerator(new SecureRandom()).generatePassword());

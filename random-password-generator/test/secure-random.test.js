@@ -1,4 +1,4 @@
-import { SecureRandom } from '../lib/secure-random';
+const { SecureRandom } = require('../lib/secure-random');
 
 test('returns 0', () => {
   for (let i = 0; i < 100; i++) {
@@ -7,7 +7,7 @@ test('returns 0', () => {
 });
 
 test('uniform distribution', () => {
-  const counter: number[] = [];
+  const counter = [];
 
   for (let i = 0; i < 100000; i++) {
     const randomValue = new SecureRandom().nextInt(5000);

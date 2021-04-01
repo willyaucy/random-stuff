@@ -1,8 +1,7 @@
-import * as crypto from 'crypto';
-import { Random } from './random';
+const crypto = require('crypto');
 
-export class SecureRandom implements Random {
-  nextInt(bound: number = 0xffff) {
+class SecureRandom {
+  nextInt(bound = 0xffff) {
     if (!Number.isInteger(bound) || bound < 0 || bound > 0xffff) {
       throw new Error('Must be a 32 bit nonnegative integer');
     }
@@ -18,7 +17,7 @@ export class SecureRandom implements Random {
     }
   }
 
-  calcBitmaskFromBound(bound: number): number {
+  calcBitmaskFromBound(bound) {
     let bitmask = 0;
 
     while (bound > 0) {
@@ -29,3 +28,4 @@ export class SecureRandom implements Random {
     return bitmask;
   }
 }
+exports.SecureRandom = SecureRandom;
