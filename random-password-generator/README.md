@@ -2,3 +2,8 @@
 ```bash
 ./main
 ```
+
+# Help
+```bash
+./main --help
+```

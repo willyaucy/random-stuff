@@ -3,4 +3,54 @@
 const { PasswordGenerator } = require('./lib/password-generator');
 const { SecureRandom } = require('./lib/secure-random');
 
-console.log(new PasswordGenerator(new SecureRandom()).generatePassword());
+const options = {};
+const args = process.argv.splice(2);
+
+args.forEach(value => writeBoolOptionValue(options, value));
+
+if (args[0] === '--help') {
+  printHelpMessage();
+  process.exit(0);
+}
+
+if (Number.isSafeInteger(Number(args[args.length - 1]))) {
+  options.length = Number(args[args.length - 1]);
+}
+
+console.log(new PasswordGenerator(new SecureRandom()).generatePassword(options));
+
+function writeBoolOptionValue(options, arg) {
+  if (!arg.startsWith('--')) {
+    return;
+  }
+
+  const value = !arg.startsWith('--no');
+  getOptionKeys(arg.match(/^--(?:no)?(.*)/)[1]).forEach(key => options[key] = value);
+}
+
+function getOptionKeys(input) {
+  const output = [];
+
+  if (input.toLowerCase().startsWith('letter') || input.toLowerCase().startsWith('lower')) {
+    output.push('useLowerCase');
+  }
+
+  if (input.toLowerCase().startsWith('letter') || input.toLowerCase().startsWith('upper')) {
+    output.push('useUpperCase');
+  }
+
+  if (input.toLowerCase().startsWith('number')) {
+    output.push('useNumbers');
+  }
+
+  return output;
+}
+
+function printHelpMessage() {
+  console.log('Usage: ./main [OPTIONS] [length]');
+  console.log();
+  console.log('Examples');
+  console.log('                       Default: ./main');
+  console.log('Numbers only with length of 50: ./main --noletters 50');
+  console.log('    Lowercase and numbers only: ./main --noupper');
+}
