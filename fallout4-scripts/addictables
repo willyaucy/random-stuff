@@ -1,0 +1,33 @@
+// Chems
+player.addItem 000518BB 100 // Berry Mentats
+player.addItem 00058AA3 100 // Buffjet
+player.addItem 00033778 100 // Buffout
+player.addItem 00058AA5 100 // Bufftats
+player.addItem 00058AA7 100 // Calmex
+player.addItem 00156D0B 100 // Daddy-O
+player.addItem 00150729 100 // Day Tripper
+player.addItem 000628CA 100 // Fury
+player.addItem 0010129A 100 // Grape Mentats
+player.addItem 000366C5 100 // Jet
+player.addItem 000518D0 100 // Jet Fuel
+player.addItem 00033779 100 // Med-X
+player.addItem 0003377B 100 // Mentats
+player.addItem 000EC4F7 100 // Mysterious serum
+player.addItem 000518C5 100 // Orange Mentats
+player.addItem 00058AAD 100 // Overdrive
+player.addItem 0003377D 100 // Psycho
+player.addItem 00058AAC 100 // Psychobuff
+player.addItem 00058AA8 100 // Psycho Jet
+player.addItem 00058AAA 100 // Psychotats
+player.addItem 00101299 100 // Ultra Jet
+player.addItem 00055F10 100 // Vault 81 Cure
+player.addItem 001506F4 100 // X-Cell
+player.addItem 0011EA93 100 // Beer
+
+// Healing
+player.addItem 00023742 2 // RadAway
+player.addItem 00023736 2 // Stimpak
+
+// Water
+player.addItem 0021681E 20 // Institute food packet
+player.addItem 0021681D 20 // Institute bottled water
