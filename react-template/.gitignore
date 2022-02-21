@@ -1,0 +1,5 @@
+.DS_Store
+*.pid
+build/
+node_modules/
+
