@@ -1,3 +1,10 @@
 {
-  "extends": "eslint:recommended"
+  "extends": ["airbnb", "airbnb/hooks"],
+  "root": true,
+  "ignorePatterns": [
+    "build"
+  ],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "allow": "as-needed" }]
+  }
 }

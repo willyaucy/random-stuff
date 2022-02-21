@@ -1,5 +1,3 @@
-'use strict';
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -27,18 +25,18 @@ module.exports = {
             options: {
               modules: true,
               sourceMap: true,
-            }
+            },
           },
           // [sass-loader](/loaders/sass-loader)
           {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-            }
-          }
-        ]
-      }
-    ]
+            },
+          },
+        ],
+      },
+    ],
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -51,8 +49,8 @@ module.exports = {
             <div id="root"></div>
           </body>
         </html>
-      `
+      `,
     }),
   ],
-  devtool: 'source-map'
+  devtool: 'source-map',
 };
