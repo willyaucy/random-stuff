@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "javascript:(()=>{`npx uglifyjs --compress --mangle -- view-source.js`})()" > bookmarket.txt
