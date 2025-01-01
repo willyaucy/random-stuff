@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const {readFile} = require('fs/promises');
+const {createReadStream} = require('fs');
 const {createServer} = require('http');
 const {resolve} = require('path');
 
@@ -19,12 +19,15 @@ const port = process.env.PORT || 8080;
 
 createServer(async (req, res) => {
   let status = 200;
+  const filePath = resolve(`${basePath}/${unescape(req.url)}`);
+  const readStream = createReadStream(filePath);
 
-  try {
-    const data = await readFile(resolve(`${basePath}/${unescape(req.url)}`));
+  readStream.on('close', () => {
+    console.log(`${req.method} ${req.url} ${status}`);
     res.writeHead(status);
-    res.end(data);
-  } catch (err) {
+  });
+
+  readStream.on('error', err => {
     switch (err.code) {
       case 'ENOENT':
         status = 404;
@@ -38,11 +41,10 @@ createServer(async (req, res) => {
         status = 500;
     }
 
-    res.writeHead(status);
     res.end(JSON.stringify(err));
-  }
+  });
 
-  console.log(`${req.method} ${req.url} ${status}`);
+  readStream.pipe(res);
 }).listen(port);
 
 console.log(`Serving content from ${basePath} at port ${port}`);
