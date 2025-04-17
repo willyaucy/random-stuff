@@ -2,6 +2,7 @@
 
 const {createReadStream} = require('fs');
 const {createServer} = require('http');
+const {existsSync} = require('fs');
 const {resolve} = require('path');
 
 if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
@@ -18,7 +19,12 @@ const basePath = resolve((process.env.BASE_PATH || __dirname).replace(/(.*)\/?$/
 const port = process.env.PORT || 8080;
 
 createServer(async (req, res) => {
-  const filePath = resolve(`${basePath}/${decodeURIComponent(req.url)}`);
+  const indexPath = 'index.html';
+  const uriComponent =
+      req.url === '/' && existsSync(indexPath)
+          ? indexPath
+          : decodeURIComponent(req.url);
+  const filePath = resolve(`${basePath}/${uriComponent}`);
   const readStream = createReadStream(filePath);
 
   readStream.on('close', () => {
