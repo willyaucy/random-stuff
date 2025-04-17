@@ -18,27 +18,25 @@ const basePath = resolve((process.env.BASE_PATH || __dirname).replace(/(.*)\/?$/
 const port = process.env.PORT || 8080;
 
 createServer(async (req, res) => {
-  let status = 200;
   const filePath = resolve(`${basePath}/${decodeURIComponent(req.url)}`);
   const readStream = createReadStream(filePath);
 
   readStream.on('close', () => {
-    console.log(`${req.method} ${req.url} ${status}`);
-    res.writeHead(status);
+    console.log(`${req.method} ${req.url} ${res.statusCode}`);
   });
 
   readStream.on('error', err => {
     switch (err.code) {
       case 'ENOENT':
-        status = 404;
+        res.statusCode = 404;
         break;
       case 'EISDIR':
       case 'ENOTDIR':
-        status = 400;
+        res.statusCode = 400;
         break;
       default:
         console.error(err);
-        status = 500;
+        res.statusCode = 500;
     }
 
     res.end(JSON.stringify(err));
