@@ -3,6 +3,7 @@
 import { createReadStream, existsSync } from 'fs';
 import { createServer } from 'http';
 import { resolve } from 'path';
+import { stat } from 'fs/promises';
 
 if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
   console.log([
@@ -10,44 +11,59 @@ if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
     'Base path and port can be customized with environment variables',
     'Example: BASE_PATH=~/someFolder PORT=9000 ./static-node-server'
   ].join('\n'));
-
   process.exit(0);
 }
 
-const basePath = resolve((process.env.PWD || __dirname).replace(/(.*)\/?$/, '$1'));
+const basePath = resolve((process.env.BASE_PATH || process.env.PWD).replace(/(.*)\/?$/, '$1'));
 const port = process.env.PORT || 8080;
+createServer(withErrorHandling(handleRequest)).listen(port);
+console.log(`Serving content from ${basePath} at port ${port}`);
 
-createServer(async (req, res) => {
+async function handleRequest(req, res) {
   const indexPath = 'index.html';
   const uriComponent =
       req.url === '/' && existsSync(indexPath)
           ? indexPath
           : decodeURIComponent(req.url).normalize();
+
+  res.on('close', () => console.log(`${req.method} ${uriComponent} ${res.statusCode}`));
   const filePath = resolve(`${basePath}/${uriComponent}`);
-  const readStream = createReadStream(filePath);
-
-  readStream.on('close', () => {
-    console.log(`${req.method} ${uriComponent} ${res.statusCode}`);
-  });
-
-  readStream.on('error', err => {
-    switch (err.code) {
-      case 'ENOENT':
-        res.statusCode = 404;
-        break;
-      case 'EISDIR':
-      case 'ENOTDIR':
-        res.statusCode = 400;
-        break;
-      default:
-        console.error(err);
-        res.statusCode = 500;
+  
+  if (existsSync(filePath)) {
+    const stats = await stat(filePath);
+    if (stats.isFile()) {
+      res.setHeader('Content-Length', stats.size);
     }
+  }
 
-    res.end(JSON.stringify(err));
-  });
+  createReadStream(filePath)
+      .on('error', err => handleError(res, err))
+      .pipe(res);
+}
 
-  readStream.pipe(res);
-}).listen(port);
+function withErrorHandling(fn) {
+  return async (req, res) =>  {
+    try {
+      await fn(req, res);
+    } catch (err) {
+      handleError(res, err);
+    }
+  };
+}
 
-console.log(`Serving content from ${basePath} at port ${port}`);
+function handleError(res, err) {
+  switch (err.code) {
+    case 'ENOENT':
+      res.statusCode = 404;
+      break;
+    case 'EISDIR':
+    case 'ENOTDIR':
+      res.statusCode = 400;
+      break;
+    default:
+      console.error(err);
+      res.statusCode = 500;
+  }
+
+  res.end(JSON.stringify(err));
+}
