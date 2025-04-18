@@ -15,7 +15,7 @@ if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
   process.exit(0);
 }
 
-const basePath = resolve((process.env.BASE_PATH || __dirname).replace(/(.*)\/?$/, '$1'));
+const basePath = resolve((process.env.PWD || __dirname).replace(/(.*)\/?$/, '$1'));
 const port = process.env.PORT || 8080;
 
 createServer(async (req, res) => {
