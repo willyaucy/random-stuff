@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { createReadStream, existsSync } from 'fs';
-import { createServer } from 'http';
-import { join, resolve } from 'path';
-import { stat } from 'fs/promises';
+const { createReadStream, existsSync } = require('fs');
+const { createServer } = require('http');
+const { join, resolve } = require('path');
+const { stat } = require('fs/promises');
 
 if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
   console.log([
