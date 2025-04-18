@@ -2,7 +2,7 @@
 
 import { createReadStream, existsSync } from 'fs';
 import { createServer } from 'http';
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { stat } from 'fs/promises';
 
 if (['--help', '-h'].includes(process.argv[process.argv.length - 1])) {
@@ -27,8 +27,15 @@ async function handleRequest(req, res) {
           : decodeURIComponent(req.url).normalize();
 
   res.on('close', () => console.log(`${req.method} ${uriComponent} ${res.statusCode}`));
-  const filePath = resolve(`${basePath}/${uriComponent}`);
-  
+  const filePath = resolve(join(basePath, uriComponent));
+
+  // A security check to prevent directory traversal attacks
+  if (filePath !== basePath && !filePath.startsWith(basePath + '/')) {
+    res.statusCode = 403;
+    res.end(JSON.stringify({ error: 'Access denied' }));
+    return;
+  }
+
   if (existsSync(filePath)) {
     const stats = await stat(filePath);
     if (stats.isFile()) {
