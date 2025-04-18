@@ -23,12 +23,12 @@ createServer(async (req, res) => {
   const uriComponent =
       req.url === '/' && existsSync(indexPath)
           ? indexPath
-          : decodeURIComponent(req.url);
+          : decodeURIComponent(req.url).normalize();
   const filePath = resolve(`${basePath}/${uriComponent}`);
   const readStream = createReadStream(filePath);
 
   readStream.on('close', () => {
-    console.log(`${req.method} ${req.url} ${res.statusCode}`);
+    console.log(`${req.method} ${uriComponent} ${res.statusCode}`);
   });
 
   readStream.on('error', err => {
